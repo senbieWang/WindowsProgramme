@@ -135,7 +135,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     switch (message)
     {
-    case WM_COMMAND:
+	case WM_CREATE:   //回调函数接收的第一条消息  CreateWindowW  的时候就会发送该消息，并进行回调
+		//todo  add  音频文件的声音
+		break;
+	case WM_COMMAND:
         {
             int wmId = LOWORD(wParam);
             // 分析菜单选择:

@@ -1,5 +1,6 @@
 ﻿#include "framework.h"
 #include "WindowsProject1.h"
+#include "StrUtility.h"
 #define MAX_LOADSTRING 100
 
 // 全局变量:
@@ -19,12 +20,18 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,     //标志当前 app实例
                      _In_ LPWSTR    lpCmdLine,
                      _In_ int       nCmdShow)  //显示方式，最大化、最小化等
 {
-    UNREFERENCED_PARAMETER(hPrevInstance);
+    //test wchar_t and char
+	Utility::char_wcharTest();
+
+	//screen pixels sprint bu messagebox
+	int cxScreen, cyScreen;
+	cxScreen = ::GetSystemMetrics(SM_CXSCREEN);
+	cyScreen = ::GetSystemMetrics(SM_CXSCREEN);
+	Utility::MessageBoxPrintf(L"ScrnSize",L"The Screen is %d pixels wide by  %d pixels high", cxScreen, cyScreen);
+
+
+	UNREFERENCED_PARAMETER(hPrevInstance);
     UNREFERENCED_PARAMETER(lpCmdLine);
-
-    //自定义的messagebox
-	MessageBox(NULL,TEXT("窗口内容"),TEXT("标题栏名称"),MB_OK);
-
 
 
     // 初始化全局字符串

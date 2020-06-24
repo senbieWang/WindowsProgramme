@@ -3,4 +3,7 @@
 i 表示 int；
 sz  已零结尾的 字符串 （string  terminated with a zero）
 
+2、多字节字符和双字节字符的学习。
+
+3、screen pixels sprint bu messagebox
 

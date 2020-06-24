@@ -29,6 +29,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,     //标志当前 app实例
 	cyScreen = ::GetSystemMetrics(SM_CXSCREEN);
 	Utility::MessageBoxPrintf(L"ScrnSize",L"The Screen is %d pixels wide by  %d pixels high", cxScreen, cyScreen);
 
+	short n = 5;
+	int nLength = sizeof(n);  //short  vs编译器下为 2 个字节
 
 	UNREFERENCED_PARAMETER(hPrevInstance);
     UNREFERENCED_PARAMETER(lpCmdLine);
@@ -52,10 +54,11 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,     //标志当前 app实例
     // 主消息循环:
     while (GetMessage(&msg, nullptr, 0, 0))
     {
-        if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
+        if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))  
         {
-            TranslateMessage(&msg);
-            DispatchMessage(&msg);
+            TranslateMessage(&msg);  //将 msg 返回给windows以进行某些键盘消息的转换
+
+            DispatchMessage(&msg);   //将消息发送给window,然后windows调用合适的函数处理该消息，  回调函数  （窗口过程函数）
         }
     }
 
@@ -82,8 +85,8 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
     wcex.hInstance      = hInstance;
     wcex.hIcon          = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_WINDOWSPROJECT1));
     wcex.hCursor        = LoadCursor(nullptr, IDC_ARROW);
-    wcex.hbrBackground  = (HBRUSH)(COLOR_WINDOW+1);
-    wcex.lpszMenuName   = MAKEINTRESOURCEW(IDC_WINDOWSPROJECT1);
+	wcex.hbrBackground = (HBRUSH)(COLOR_HIGHLIGHT);//(HBRUSH)(COLOR_WINDOW+1);
+	wcex.lpszMenuName = nullptr;//MAKEINTRESOURCEW(IDC_WINDOWSPROJECT1);  //菜单
     wcex.lpszClassName  = szWindowClass;
     wcex.hIconSm        = LoadIcon(wcex.hInstance, MAKEINTRESOURCE(IDI_SMALL));
 
@@ -112,8 +115,8 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
       return FALSE;
    }
 
-   ShowWindow(hWnd, nCmdShow);
-   UpdateWindow(hWnd);
+   ShowWindow(hWnd, nCmdShow);  //在屏幕中显示窗口
+   UpdateWindow(hWnd);          //窗口对自身进行重绘
 
    return TRUE;
 }
@@ -121,7 +124,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 //
 //  函数: WndProc(HWND, UINT, WPARAM, LPARAM)
 //
-//  目标: 处理主窗口的消息。
+//  目标: 处理主窗口的消息。 窗口过程、回调函数
 //
 //  WM_COMMAND  - 处理应用程序菜单
 //  WM_PAINT    - 绘制主窗口
@@ -153,12 +156,15 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         {
             PAINTSTRUCT ps;
             HDC hdc = BeginPaint(hWnd, &ps);
-            // TODO: 在此处添加使用 hdc 的任何绘图代码...
+			RECT rect;
+			GetClientRect(hWnd,&rect); //获取客户区的坐标	
+			Ellipse(hdc, rect.left+10 ,rect.top+10,rect.right-10,rect.bottom-10);
+			DrawText(hdc, L"你好windows!", -1, &rect, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
             EndPaint(hWnd, &ps);
         }
         break;
     case WM_DESTROY:
-        PostQuitMessage(0);
+        PostQuitMessage(0);  //将 退出 消息插入消息队列
         break;
     default:
         return DefWindowProc(hWnd, message, wParam, lParam);
@@ -185,3 +191,10 @@ INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
     }
     return (INT_PTR)FALSE;
 }
+
+
+//learn 四种数据结构
+//MSG      消息结构体
+//WNDCLASS    窗口类结构体
+//PAINTSTRUCT   绘制结构体
+//RECT      矩形结构体

@@ -7,3 +7,21 @@ sz  已零结尾的 字符串 （string  terminated with a zero）
 
 3、screen pixels sprint bu messagebox
 
+4、标志符前缀的意义
+
+       前缀           常量              
+	   CS             类风格选项
+	   CW             创建窗口选项
+	   DT             文本绘制选项
+	   IDI            图标的ID号
+	   IDC            光标的ID号
+	   MB             消息框选项
+	   SND            声音选项
+	   WM             窗口消息
+	   WS             窗口风格
+
+5、四种结构体
+        MSG           消息结构体
+        WNDCLASS      窗口类结构体
+        PAINTSTRUCT   绘制结构体
+        RECT          矩形结构体

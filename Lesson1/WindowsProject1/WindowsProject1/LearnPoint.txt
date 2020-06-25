@@ -25,3 +25,22 @@ sz  已零结尾的 字符串 （string  terminated with a zero）
         WNDCLASS      窗口类结构体
         PAINTSTRUCT   绘制结构体
         RECT          矩形结构体
+
+6、vs 下  short 为 16位
+
+7、发送WM_PAINT消息：
+   用户移动一个窗口，导致原来被覆盖的部分窗口暴露出来。
+   用户调整窗口的大小（当窗口的类型设定为 CS_HREDRAW 和 CS_VREDRAW 值时）。
+   程序调用 ScrollWindow 或 ScrollDC 函数滚动客户区。
+   程序调用InvalidateRect 或 InvalidateRgn 函数显式生成WM_PAINT消息。
+
+   以下windows可能会发WM_PAINT消息：
+   windows关闭一个覆盖了部分窗口的对话框或消息框。
+   下来菜单被拉下然后收回。
+   显示提示信息。
+
+   以下情况，windows总会保存被覆盖部分的显示内容，然后再恢复：
+   鼠标指针在客户去内移动。
+   在客户区内拖动图标。
+
+8、有效矩形 和 无效矩形（客户区需要重新绘制的部分）

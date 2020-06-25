@@ -21,16 +21,17 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,     //标志当前 app实例
                      _In_ int       nCmdShow)  //显示方式，最大化、最小化等
 {
     //test wchar_t and char
-	Utility::char_wcharTest();
+	//Utility::char_wcharTest();
 
-	//screen pixels sprint bu messagebox
-	int cxScreen, cyScreen;
-	cxScreen = ::GetSystemMetrics(SM_CXSCREEN);
-	cyScreen = ::GetSystemMetrics(SM_CXSCREEN);
-	Utility::MessageBoxPrintf(L"ScrnSize",L"The Screen is %d pixels wide by  %d pixels high", cxScreen, cyScreen);
+	////screen pixels sprint bu messagebox
+	//int cxScreen, cyScreen;
+	//cxScreen = ::GetSystemMetrics(SM_CXSCREEN);
+	//cyScreen = ::GetSystemMetrics(SM_CXSCREEN);
+	//Utility::MessageBoxPrintf(L"ScrnSize",L"The Screen is %d pixels wide by  %d pixels high", cxScreen, cyScreen);
 
-	short n = 5;
-	int nLength = sizeof(n);  //short  vs编译器下为 2 个字节
+	//short n = 5;
+	//int nLength = sizeof(n);  //short  vs编译器下为 2 个字节
+
 
 	UNREFERENCED_PARAMETER(hPrevInstance);
     UNREFERENCED_PARAMETER(lpCmdLine);
@@ -130,13 +131,18 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 //  WM_PAINT    - 绘制主窗口
 //  WM_DESTROY  - 发送退出消息并返回
 //
-//
+#include <mmsystem.h>
+#pragma comment(lib,"winmm.lib") 
+
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     switch (message)
     {
 	case WM_CREATE:   //回调函数接收的第一条消息  CreateWindowW  的时候就会发送该消息，并进行回调
-		//todo  add  音频文件的声音
+        //MessageBeep(MB_OK);
+        //MessageBeep(MB_OKCANCEL);
+        //MessageBeep(MB_YESNOCANCEL);
+        PlaySound(L"F:\\code\\徐小凤 - 慢慢前路.wav",NULL, SND_ASYNC); //异步的方式 播放音乐
 		break;
 	case WM_COMMAND:
         {

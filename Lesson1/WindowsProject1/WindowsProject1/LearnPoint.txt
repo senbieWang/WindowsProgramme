@@ -44,3 +44,18 @@ sz  已零结尾的 字符串 （string  terminated with a zero）
    在客户区内拖动图标。
 
 8、有效矩形 和 无效矩形（客户区需要重新绘制的部分）
+
+9、获取设备环境（DC）的方法
+   方法一，处理WM_PAINT消息时用到：
+   BeginPaint()； //裁剪部位是无效矩形
+   //绘制代码
+   EndPaint()
+
+   方法二：
+   GetDC()； //裁剪部位是整个客户区，一般用于处理键盘和鼠标消息
+   [使用GDI函数]
+   ReleaseDC()
+
+   GetWindowDC();//返回整个窗口的设备环境句柄，可以绘制非客区。例如标题栏，程序必须处理WM_NCPAINT
+
+

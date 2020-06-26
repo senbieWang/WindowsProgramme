@@ -27,6 +27,9 @@
     <ClInclude Include="TextOutLearn.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="sysmets.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TextOutLearn.cpp">

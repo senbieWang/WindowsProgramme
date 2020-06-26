@@ -3,7 +3,7 @@
 
 #include "framework.h"
 #include "TextOutLearn.h"
-
+#include "sysmets.h"
 #define MAX_LOADSTRING 100
 
 // 全局变量:
@@ -75,7 +75,7 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
     wcex.hInstance      = hInstance;
     wcex.hIcon          = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_TEXTOUTLEARN));
     wcex.hCursor        = LoadCursor(nullptr, IDC_ARROW);
-    wcex.hbrBackground = (HBRUSH)::GetStockObject(BLACK_BRUSH) ;//(HBRUSH)(COLOR_WINDOW+1);  黑色背景
+    wcex.hbrBackground = (HBRUSH)::GetStockObject(WHITE_BRUSH) ;//(HBRUSH)(COLOR_WINDOW+1);  黑色背景
     wcex.lpszMenuName   = nullptr;//MAKEINTRESOURCEW(IDC_TEXTOUTLEARN);  //不加载菜单
     wcex.lpszClassName  = szWindowClass;
     wcex.hIconSm        = LoadIcon(wcex.hInstance, MAKEINTRESOURCE(IDI_SMALL));
@@ -120,11 +120,26 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 //  WM_PAINT    - 绘制主窗口
 //  WM_DESTROY  - 发送退出消息并返回
 //
-//
+
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
+    static int  cxChar, cxCaps, cyChar;
+    HDC  hdc;
+    int i;
+    PAINTSTRUCT ps;
+    TCHAR  szBuffer[10];
+    TEXTMETRIC tm;  //字符的尺寸信息
+
     switch (message)
     {
+    case WM_CREATE:
+        hdc = GetDC(hWnd);
+        GetTextMetrics(hdc,&tm);
+        cxChar = tm.tmAveCharWidth; //字符平均宽度
+        cxCaps = (tm.tmPitchAndFamily & 1 ? 3 : 2) * cxChar / 2; //大写字符的平均宽度
+        cyChar = tm.tmHeight + tm.tmExternalLeading;  //总高度 + 外部间距
+        ReleaseDC(hWnd, hdc);
+        return 0;
     case WM_COMMAND:
         {
             int wmId = LOWORD(wParam);
@@ -144,12 +159,18 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         break;
     case WM_PAINT:
         {
-            PAINTSTRUCT ps;
-            HDC hdc = BeginPaint(hWnd, &ps);
-            // TODO: 在此处添加使用 hdc 的任何绘图代码...
+            hdc = BeginPaint(hWnd, &ps);
+            for (int i = 0; i < NUMLINES ;i ++ ) 
+            {
+                TextOut(hdc,0,cyChar*i,sysmetrics[i].szLabel,lstrlen(sysmetrics[i].szLabel));
+                TextOut(hdc, 22 * cxCaps, cyChar * i, sysmetrics[i].szDesc, lstrlen(sysmetrics[i].szDesc));
+                SetTextAlign(hdc,TA_RIGHT |TA_TOP);  //后续的输出 从由上对齐
+                TextOut(hdc, 22 * cxCaps +40*cxChar, cyChar * i, szBuffer, wsprintf(szBuffer,L"%5d",GetSystemMetrics(sysmetrics[i].iIndex)));
+                SetTextAlign(hdc, TA_LEFT| TA_TOP);  //后续的输出
+            }
             EndPaint(hWnd, &ps);
+            return 0;
         }
-        break;
     case WM_DESTROY:
         PostQuitMessage(0);
         break;

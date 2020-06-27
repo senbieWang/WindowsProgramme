@@ -97,7 +97,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
    hInst = hInstance; // 将实例句柄存储在全局变量中
 
-   HWND hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
+   HWND hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW | WS_VSCROLL/* | WS_HSCROLL */,
       CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, nullptr, nullptr, hInstance, nullptr);
 
    if (!hWnd)
@@ -124,6 +124,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     static int  cxChar, cxCaps, cyChar;
+    static int  cxClient, cyClient, iVscrollPos;
     HDC  hdc;
     int i;
     PAINTSTRUCT ps;
@@ -139,6 +140,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         cxCaps = (tm.tmPitchAndFamily & 1 ? 3 : 2) * cxChar / 2; //大写字符的平均宽度
         cyChar = tm.tmHeight + tm.tmExternalLeading;  //总高度 + 外部间距
         ReleaseDC(hWnd, hdc);
+        SetScrollRange(hWnd,SB_VERT,0, NUMLINES-1,FALSE );
+        SetScrollPos(hWnd,SB_VERT,iVscrollPos,TRUE);
         return 0;
     case WM_COMMAND:
         {
@@ -171,6 +174,27 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             EndPaint(hWnd, &ps);
             return 0;
         }
+    case WM_SIZE:
+        cxClient = LOWORD(lParam);
+        cyClient = HIWORD(lParam);
+        return 0;
+    case WM_VSCROLL:
+        switch (LOWORD(lParam))
+        {
+        case SB_LINEUP:
+            iVscrollPos -=1;
+            break;
+        case SB_LINEDOWN:
+            iVscrollPos += 1;
+            break;
+        }
+        iVscrollPos = max(0,min(iVscrollPos, NUMLINES-1));
+        if (iVscrollPos!=GetScrollPos(hWnd,SB_VERT))
+        {
+            SetScrollPos(hWnd, SB_VERT, iVscrollPos,TRUE);
+            InvalidateRect(hWnd,NULL,TRUE);
+        }
+        return 0;
     case WM_DESTROY:
         PostQuitMessage(0);
         break;
